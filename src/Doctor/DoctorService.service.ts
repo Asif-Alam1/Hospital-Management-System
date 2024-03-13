@@ -1,48 +1,28 @@
 import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma.service";
+import { Doctor,Prisma } from "@prisma/client";
 
-export interface Doctor {
-    id: string;
-    name: string;
-    DepartmentId: string;
-}
 
 @Injectable()
 export class DoctorService {
-    private readonly Doctors: Doctor[] = [];
-    create(doctor:Doctor): Doctor {
-        doctor.id = (this.Doctors.length + 1).toString();
-        this.Doctors.push(doctor);
-        return doctor;
+    constructor(private prisma: PrismaService) {}
+  async  create(data:Prisma.DoctorCreateInput): Promise<Doctor> {
+        return this.prisma.doctor.create({ data });
     }
 
-    findAll(): Doctor[] {
-        return this.Doctors;
+   async  findAll(): Promise<Doctor[]> {
+        return this.prisma.doctor.findMany();
     }
 
-    findOne(id: string): Doctor {
-        const doctor= this.Doctors.find(doctor => doctor.id === id);
-        if(doctor){
-            return doctor;
-        }else{
-            throw new Error('Doctor not found');
-        }
+  async  findOne(id: string): Promise<Doctor | null> {
+     return this.prisma.doctor.findUnique({ where: { id } });
     }
 
-    deleteOne(id: string): void {
-      if(this.Doctors.findIndex(doctor => doctor.id === id) !== -1)
-        this.Doctors.splice(this.Doctors.findIndex(doctor => doctor.id === id), 1);
-      else
-        throw new Error('Doctor not found');
+    async deleteOne(id: string): Promise<Doctor> {
+        return this.prisma.doctor.delete({ where: { id } });
     }
 
-    updateOne(id: string, doctor: Doctor): Doctor {
-
-        if(this.Doctors.findIndex(doctor => doctor.id === id) === -1)
-          throw new Error('Doctor not found');
-
-        const index = this.Doctors.findIndex(doctor => doctor.id === id);
-        doctor.id = id;
-        this.Doctors[index] = doctor;
-        return doctor;
+ async   updateOne(id: string, data: Prisma.DoctorUpdateInput): Promise<Doctor> {
+        return this.prisma.doctor.update({ where: { id }, data });
     }
 }

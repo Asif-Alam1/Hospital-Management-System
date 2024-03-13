@@ -1,44 +1,25 @@
 import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma.service";
+import {Patient,Prisma} from '@prisma/client';
 
-export interface Patient {
-    id: string;
-    name: string;
-    age: number;
-    doctorId: string;
-}
 @Injectable()
 export class PatientService {
-private readonly Patients: Patient[] = [];
-create(patient:Patient): Patient {
-  patient.id = (this.Patients.length + 1).toString();
-    this.Patients.push(patient);
-    return patient;
-}
-findAll(): Patient[] {
-    return this.Patients;
-}
+ constructor(private prisma: PrismaService) {}
+async create(data: Prisma.PatientCreateInput): Promise<Patient> {
+    return this.prisma.patient.create({ data });
+  }
+  async findAll(): Promise<Patient[]> {
+    return this.prisma.patient.findMany();
+  }
+ async findOne(id: string): Promise<Patient | null> {
+    return this.prisma.patient.findUnique({ where: { id } });
+  }
 
-findOne(id: string): Patient {
-  if(this.Patients.findIndex(patient => patient.id === id) === -1)
-    throw new Error('Patient not found');
-  else
-    return this.Patients.find(patient => patient.id === id);
-}
+ async deleteOne(id: string): Promise<Patient> {
+    return this.prisma.patient.delete({ where: { id } });
+  }
 
-deleteOne(id: string): void {
-  if(this.Patients.findIndex(patient => patient.id === id) === -1)
-    throw new Error('Patient not found');
-  else
-    this.Patients.splice(this.Patients.findIndex(patient => patient.id === id), 1);
-
-}
-
-updateOne(id: string, patient: Patient): Patient {
-  if(this.Patients.findIndex(patient => patient.id === id) === -1)
-    throw new Error('Patient not found');
-  patient.id = id;
-  const index = this.Patients.findIndex(patient => patient.id === id);
-  this.Patients[index] = patient;
-  return patient;
-}
+async updateOne(id: string, data: Prisma.PatientUpdateInput): Promise<Patient> {
+    return this.prisma.patient.update({ where: { id }, data });
+  }
 }

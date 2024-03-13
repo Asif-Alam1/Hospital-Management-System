@@ -1,5 +1,6 @@
 import { Controller,Get,Post,Delete,Param,Body,Put } from "@nestjs/common";
-import { Doctor, DoctorService } from "./DoctorService.service";
+import { DoctorService } from "./DoctorService.service";
+import { Doctor,Prisma } from "@prisma/client";
 
 
 
@@ -7,27 +8,27 @@ import { Doctor, DoctorService } from "./DoctorService.service";
 export class DoctorController {
     constructor(private DoctorService:DoctorService) {}
     @Get()
-    findAll(): Doctor[] {
+   async findAll(): Promise<Doctor[]> {
         return this.DoctorService.findAll();
     }
     @Get(':id')
-    findOne(@Param('id') id:string): Doctor {
+   async findOne(@Param('id') id:string): Promise<Doctor | null>{
       return this.DoctorService.findOne(id);
     }
 
     @Post()
-    create(@Body() Doctor: Doctor): Doctor{
-        return this.DoctorService.create(Doctor);
+    async create(@Body() data: Prisma.DoctorCreateInput): Promise<Doctor>{
+        return this.DoctorService.create(data);
     }
 
     @Delete(':id')
-    deleteOne(@Param('id') id:string): void {
-        this.DoctorService.deleteOne(id);
+    async deleteOne(@Param('id') id:string): Promise<Doctor> {
+        return this.DoctorService.deleteOne(id);
     }
 
     @Put(':id')
-    updateOne(@Param('id') id:string, @Body() Doctor: Doctor): Doctor {
-        return this.DoctorService.updateOne(id, Doctor);
+   async updateOne(@Param('id') id:string, @Body() data:Prisma.DoctorUpdateInput): Promise<Doctor> {
+        return this.DoctorService.updateOne(id, data);
     }
 
 

@@ -1,32 +1,33 @@
 import { Controller,Get,Post,Delete,Param,Body,Put } from "@nestjs/common";
-import{ DepartmentService,Department } from "./DepartmentService.service";
+import{ DepartmentService } from "./DepartmentService.service";
+import { Department,Prisma } from "@prisma/client";
 
 
 @Controller('Department')
 export class DepartmentController {
     constructor(private DepartmentService:DepartmentService) {}
     @Get()
-    findAll(): Department[] {
+  async  findAll(): Promise<Department[]> {
         return this.DepartmentService.findAll();
     }
     @Get(':id')
-    findOne(@Param('id') id:string): Department {
+    async findOne(@Param('id') id:string): Promise<Department | null>{
       return this.DepartmentService.findOne(id);
     }
 
     @Post()
-    create(@Body() Department: Department): Department{
-        return this.DepartmentService.create(Department);
+  async   create(@Body() data:Prisma.DepartmentCreateInput): Promise<Department>{
+        return this.DepartmentService.create(data);
     }
 
     @Delete(':id')
-    deleteOne(@Param('id') id:string): void {
-        this.DepartmentService.deleteOne(id);
+  async  deleteOne(@Param('id') id:string): Promise<Department> {
+        return this.DepartmentService.deleteOne(id);
     }
 
     @Put(':id')
-    updateOne(@Param('id') id:string, @Body() Department: Department): Department {
-        return this.DepartmentService.updateOne(id, Department);
+    async updateOne(@Param('id') id:string, @Body() data: Prisma.DepartmentUpdateInput): Promise<Department> {
+        return this.DepartmentService.updateOne(id, data);
     }
 
 }

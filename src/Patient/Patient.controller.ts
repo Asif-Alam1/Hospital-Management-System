@@ -1,33 +1,33 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { PatientService,Patient } from "./PatientService.service";
+import { PatientService } from "./PatientService.service";
+import { Patient, Prisma } from "@prisma/client";
 
-
-@Controller('Patient')
+@Controller('patient')
 export class PatientController {
-    constructor(private PatientService:PatientService) {}
+    constructor(private patientService: PatientService) {}
+
     @Get()
-    findAll(): Patient[] {
-        return this.PatientService.findAll();
+    async findAll(): Promise<Patient[]> {
+        return this.patientService.findAll();
     }
+
     @Get(':id')
-    findOne(@Param('id') id:string): Patient {
-      return this.PatientService.findOne(id);
+    async findOne(@Param('id') id: string): Promise<Patient | null> {
+        return this.patientService.findOne(id);
     }
 
     @Post()
-    create(@Body() Patient: Patient): Patient{
-        return this.PatientService.create(Patient);
+    async create(@Body() data: Prisma.PatientCreateInput): Promise<Patient> {
+        return this.patientService.create(data);
     }
 
     @Delete(':id')
-    deleteOne(@Param('id') id:string): void {
-        this.PatientService.deleteOne(id);
+    async deleteOne(@Param('id') id: string): Promise<Patient> {
+        return this.patientService.deleteOne(id);
     }
-
 
     @Put(':id')
-    updateOne(@Param('id') id:string, @Body() Patient: Patient): Patient {
-        return this.PatientService.updateOne(id, Patient);
+    async updateOne(@Param('id') id: string, @Body() data: Prisma.PatientUpdateInput): Promise<Patient> {
+        return this.patientService.updateOne(id, data);
     }
-
 }
