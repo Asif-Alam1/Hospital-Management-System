@@ -6,10 +6,9 @@ import { DepartmentModule } from './Department/Deparment.module';
 import { DoctorModule } from './Doctor/Doctor.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
 import { AppointmentModule } from './Appointment/Appointment.module';
 @Module({
-  imports: [PatientModule, DepartmentModule,DoctorModule,ConfigModule.forRoot(), AuthModule, UsersModule,AppointmentModule],
+  imports: [PatientModule, DepartmentModule,DoctorModule,ConfigModule.forRoot(), AuthModule,AppointmentModule],
   controllers: [AppController],
   providers: [AppService],
 })
