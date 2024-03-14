@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
-  async login(data: { id: string; Password: string }): Promise<any> {
+  async login(data: Prisma.UserCreateInput): Promise<any> {
     const { id, Password } = data;
 
     // Check if user exists
