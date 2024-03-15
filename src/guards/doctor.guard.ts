@@ -20,8 +20,18 @@ export class DoctorGuard implements CanActivate {
 
     try {
       const payload = this.jwtService.verify(token);
-      const role= payload.role
-      return (role=='Admin' || role=='Doctor') // Return true if the user is an admin, false otherwise
+      const role = payload.role;
+      const userId = payload.userId; // Get the userId from the JWT payload
+
+      const routeId = request.params.id; // Get the 'id' parameter from the URL
+
+      // Check if the userId from the JWT matches the 'id' from the URL
+      const isAuthorized = userId === routeId || role === 'Admin';
+
+      // Also check if the user is a Doctor or Admin
+      const isDoctor = role === 'Doctor' || role === 'Admin';
+
+      return isAuthorized && isDoctor;
     } catch (error) {
       return false;
     }

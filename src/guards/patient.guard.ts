@@ -21,7 +21,15 @@ export class PatientGuard implements CanActivate {
     try {
       const payload = this.jwtService.verify(token);
       const role= payload.role
-      return (role=='Admin'||role=='Patient') // Return true if the user is an admin, false otherwise
+    const userId = payload.userId;
+
+        const routeId = request.params.id;
+        const isAuthorized = userId === routeId || role === 'Admin';
+
+
+        const isPatient = role === 'Patient' || role === 'Admin';
+
+        return isAuthorized && isPatient;
     } catch (error) {
       return false;
     }

@@ -24,7 +24,19 @@ export class AuthService {
     }
 
     // Generate and return JWT token
-      const payload = { id: user.id, role: user.role,};
+    let userId
+  if(user.role=='Doctor')
+  {
+    userId = await this.prisma.doctor.findUnique({ where: { userId: id } });
+  }
+  else if(user.role=='Patient')
+  {
+    userId = await this.prisma.patient.findUnique({ where: { userId: id } });
+  }else{
+    userId={id:null};
+  }
+
+      const payload = { id: user.id, role: user.role,userId:userId.id};
     return this.jwtService.sign(payload);
   }
 
