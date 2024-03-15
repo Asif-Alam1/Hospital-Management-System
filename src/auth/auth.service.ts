@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     // Generate and return JWT token
-    const payload = { id: user.id };
+      const payload = { id: user.id, role: user.role,};
     return this.jwtService.sign(payload);
   }
 
@@ -34,6 +34,7 @@ export class AuthService {
     data.Password = hash;
 
     return this.prisma.user.create({ data });
+
   }
 
   async logout() {

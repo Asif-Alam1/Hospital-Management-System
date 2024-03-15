@@ -7,46 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Prisma schema
-
-model User{
-  id   String @id @unique
-  Password String
+enum Status {
+  pending
+  completed
+  cancelled
+  approved
 }
 
+enum Role {
+  Doctor
+  Patient
+  Admin
+}
+
+model User {
+  id        String    @id @unique @default(cuid())
+  Password  String
+  role      Role      @default(Patient)
+  doctor    Doctor?
+  patient   Patient?
+}
 
 model Department {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  location  String
-  doctors   Doctor[]
+  id       String   @id @default(cuid())
+  name     String   @unique
+  location String
+  doctors  Doctor[]
 }
+
 model Doctor {
-  id          String   @id @default(cuid())
-  name        String
-  department  Department  @relation(fields: [DepartmentId], references: [id])
+  id           String       @id @default(cuid())
+  user         User         @relation(fields: [userId], references: [id])
+  userId       String       @unique
+  name         String
+  department Department @relation(fields: [DepartmentId], references: [id])
   DepartmentId String
-  patients    Patient[]
+  patients     Patient[]
   appointments Appointment[]
 
-  @@unique([DepartmentId])
+  @@unique([DepartmentId, userId])
 }
 
 model Patient {
-  id        String   @id @default(cuid())
-  name      String
-  age       Int
-  doctor    Doctor  @relation(fields: [doctorId], references: [id])
-  doctorId  String
+  id           String       @id @default(cuid())
+  user         User         @relation(fields: [userId], references: [id])
+  userId       String       @unique
+  name         String
+  age          Int
+  doctor       Doctor       @relation(fields: [doctorId], references: [id])
+  doctorId     String
   appointments Appointment[]
-  @@unique([doctorId])
+
+  @@unique([doctorId, userId])
 }
 
 model Appointment {
-  id          String   @id @default(cuid())
-  doctorId    String
-  patientId   String
-  date        DateTime
-  doctor      Doctor  @relation(fields: [doctorId], references: [id])
-  patient     Patient  @relation(fields: [patientId], references: [id])
+  id        String   @id @default(cuid())
+  doctorId  String
+  patientId String
+  date      DateTime
+  status    Status   @default(pending)
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
+  patient   Patient  @relation(fields: [patientId], references: [id])
 }

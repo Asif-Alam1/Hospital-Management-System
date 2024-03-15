@@ -4,6 +4,7 @@ import {User, Prisma} from '@prisma/client';
 import { AuthService } from './auth.service';
 
 import { AuthGuard } from 'src/guards/auth.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 
 @Controller('auth')
@@ -30,5 +31,10 @@ export class AuthController {
     return "You are authenticated"
   }
 
+  @Get('admin')
+  @UseGuards(AdminGuard)
+  admin(){
+    return "You are an admin"
+  }
 
 }
