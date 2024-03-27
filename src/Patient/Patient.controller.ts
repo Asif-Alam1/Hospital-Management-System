@@ -22,6 +22,18 @@ export class PatientController {
         return this.patientService.findOne(id);
     }
 
+    @Get('/search')
+    @UseGuards(AdminGuard)
+    async findByName(@Query('name') name: string): Promise<Patient[] | null> {
+        return this.patientService.findByName(name);
+    }
+
+    @Get(':id/appointments/:status')
+    @UseGuards(PatientGuard)
+    async getAppointmentsByStatus(@Param('id') id: string, @Param('status') status: string) {
+        return this.patientService.findAppointmentByStatus(status,id);
+    }
+
     @Post()
     @UseGuards(AdminGuard)
     async create(@Body() data: Prisma.PatientCreateInput): Promise<Patient> {

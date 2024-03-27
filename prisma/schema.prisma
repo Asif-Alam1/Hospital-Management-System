@@ -21,6 +21,7 @@ enum Role {
 }
 
 model User {
+  Email     String    @unique
   id        String    @id @unique @default(cuid())
   Password  String
   role      Role      @default(Patient)
@@ -33,6 +34,11 @@ model Department {
   name     String   @unique
   location String
   doctors  Doctor[]
+}
+
+model Blacklist {
+  id        String @id @default(cuid())
+  token     String @unique
 }
 
 model Doctor {

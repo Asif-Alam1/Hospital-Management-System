@@ -36,4 +36,9 @@ export class DepartmentController {
         return this.DepartmentService.updateOne(id, data);
     }
 
+    @Get(':id/doctors')
+    @UseGuards(AdminGuard)
+    async findDoctors(@Param('id') id: string): Promise<any> {
+        return this.DepartmentService.findDoctors(id);
+    }
 }

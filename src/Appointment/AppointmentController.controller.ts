@@ -1,4 +1,4 @@
-import { Controller,Get,Put,Post,Delete,Param,Body,UseGuards } from "@nestjs/common";
+import { Controller,Get,Put,Post,Delete,Param,Body,UseGuards,Query } from "@nestjs/common";
 import { AppointmentService } from "./AppointmentService.service";
 import { Appointment,Prisma } from "@prisma/client";
 import { AuthGuard } from "src/guards/auth.guard";
@@ -11,8 +11,9 @@ export class AppointmentController {
 constructor(private AppointmentService:AppointmentService) {}
 @Get()
 @UseGuards(AuthGuard)
-async findAll(): Promise<Appointment[]> {
-    return this.AppointmentService.findAll();
+async findAll(@Query('skip') skip?: number,
+    @Query('take') take?: number,@Query('filter') filter?: Prisma.AppointmentWhereInput, @Query('orderBy') orderBy?:Prisma.AppointmentOrderByWithRelationInput): Promise<Appointment[]> {
+    return this.AppointmentService.findAll(filter,orderBy,skip,take);
 }
 @Get(':id')
 @UseGuards(AuthGuard)
@@ -38,5 +39,26 @@ async updateOne(@Param('id') id:string, @Body() data: Prisma.AppointmentUpdateIn
     return this.AppointmentService.updateOne(id, data);
 }
 
+@Get('/doctor/:doctorId')
+@UseGuards(AuthGuard)
+async findByDoctorId(@Param('doctorId') doctorId: string): Promise<Appointment[]> {
+    return this.AppointmentService.findByDoctorId(doctorId);
+}
+@Get('/patient/:patientId')
+@UseGuards(AuthGuard)
+async findByPatientId(@Param('patientId') patientId: string): Promise<Appointment[]> {
+    return this.AppointmentService.findByPatientId(patientId);
+}
+@Get('/status/:status')
+@UseGuards(AuthGuard)
+async findByStatus(@Param('status') status: Appointment['status']): Promise<Appointment[]> {
+    return this.AppointmentService.findByStatus(status);
+}
 
+@Get('/date')
+@UseGuards(AuthGuard)
+async findByDate(@Query('startDate') startDate:Date,@Query('endDate') endDate:Date): Promise<Appointment[]> {
+    return this.AppointmentService.findByDateRange(startDate,endDate);
+
+}
 }

@@ -1,8 +1,6 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards,Request } from '@nestjs/common';
 import {User, Prisma} from '@prisma/client';
-
 import { AuthService } from './auth.service';
-
 import { AuthGuard } from 'src/guards/auth.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
 
@@ -20,8 +18,9 @@ export class AuthController {
     return this.authService.register(data);
   }
   @Post('logout')
-  async logout() {
-    return this.authService.logout();
+  async logout(@Request() req:any){
+  const token = req.headers['authorization'].split(' ')[1];
+    return this.authService.logout(token);
   }
 
   //this is how the protected route is created, however this will need client side logic to keep trakc of the jwt token issued by the server and send it with every request to the server

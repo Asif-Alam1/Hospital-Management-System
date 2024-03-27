@@ -28,4 +28,11 @@ async updateOne(id: string, data: Prisma.DepartmentUpdateInput): Promise<Departm
  return this.prisma.department.update({ where: { id }, data });
 }
 
+async findDoctors(id: string): Promise<any> {
+  return this.prisma.doctor.findMany({
+    where: {
+      DepartmentId: id,
+    },
+  });
+}
 }

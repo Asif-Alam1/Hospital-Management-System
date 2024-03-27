@@ -10,18 +10,47 @@ export class DoctorService {
         return this.prisma.doctor.create({ data });
     }
 
-  async findAll(page: number = 1, perPage: number = 10): Promise<Doctor[]> {
+  async findAll(page: number = 1, perPage: number = 10): Promise<any> {
+    const total= await this.prisma.doctor.count();
+    const totalPages = Math.ceil(total / perPage);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
     const skip = (page - 1) * perPage; // Calculate skip offset for pagination
-    return await this.prisma.doctor.findMany({
+    const doctors= await this.prisma.doctor.findMany({
       skip,
       take: perPage,
     });
-
+    return {
+      doctors,
+      total,
+      totalPages,
+      hasNextPage,
+      hasPreviousPage
+    }
   }
 
   async  findOne(id: string): Promise<Doctor | null> {
      return this.prisma.doctor.findUnique({ where: { id } });
     }
+
+    async findByName(name: string): Promise<Doctor[]| null> {
+        return this.prisma.doctor.findMany({
+            where: {
+                name: {
+                    contains: name
+                }
+            }
+        })
+    }
+
+    async findAppointmentByStatus(status: string,id:string): Promise<Appointment[]| null> {
+        return this.prisma.appointment.findMany({
+            where: {
+              status:status as any,
+            doctorId:id
+          }
+        })
+      }
 
     async deleteOne(id: string): Promise<Doctor> {
         return this.prisma.doctor.delete({ where: { id } });

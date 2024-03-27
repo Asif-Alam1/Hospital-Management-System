@@ -20,6 +20,12 @@ export class DoctorController {
       return this.DoctorService.findOne(id);
     }
 
+    @Get('/search')
+    @UseGuards(AdminGuard)
+    async findByName(@Query('name') name: string): Promise<Doctor[] | null> {
+        return this.DoctorService.findByName(name);
+    }
+
     @Post()
     @UseGuards(AdminGuard)
     async create(@Body() data: Prisma.DoctorCreateInput): Promise<Doctor>{
@@ -41,6 +47,12 @@ export class DoctorController {
     @UseGuards(DoctorGuard)
     async getAppointments(@Param('id') id: string) {
         return this.DoctorService.getAppointments(id);
+    }
+
+    @Get(':id/appointments/:status')
+    @UseGuards(DoctorGuard)
+    async getAppointmentsByStatus(@Param('id') id: string, @Param('status') status: string) {
+        return this.DoctorService.findAppointmentByStatus(status,id);
     }
 
     @Put(':id/appointments/:appointmentId/approve')
