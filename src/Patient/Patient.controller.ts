@@ -89,7 +89,7 @@ export class PatientController {
 
     @Post(':appointments')
     @UseGuards(PatientGuard)
-    async createAppointment( @Body() data: Prisma.AppointmentCreateInput) {
+    async createAppointment( @Body() data: Prisma.AppointmentUncheckedCreateInput) {
         return this.patientService.createAppointment(data);
     }
     @Put(':id/appointments/:appointmentId')

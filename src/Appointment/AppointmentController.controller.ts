@@ -23,7 +23,7 @@ async findOne(@Param('id') id:string): Promise<Appointment | null>{
 
 @Post()
 @UseGuards(AdminGuard)
-async create(@Body() data:Prisma.AppointmentCreateInput): Promise<Appointment>{
+async create(@Body() data:Prisma.AppointmentUncheckedCreateInput): Promise<Appointment>{
     return this.AppointmentService.create(data);
 }
 

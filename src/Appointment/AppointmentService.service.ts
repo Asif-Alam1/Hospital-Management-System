@@ -8,11 +8,20 @@ export class AppointmentService {
 
 constructor(private prisma: PrismaService) {}
 
-async create(data: Prisma.AppointmentCreateInput): Promise<Appointment> {
+async create(data: Prisma.AppointmentUncheckedCreateInput ): Promise<Appointment> {
   const {  date } = data;
-  const doctorId = data.doctor.connect.id;
-  const patientId = data.patient.connect.id;
+  const doctorId = data.doctorId;
+  const patientId = data.patientId;
 
+  const doctor = await this.prisma.doctor.findUnique({ where: { id: doctorId } });
+  if (!doctor) {
+    throw new Error('Doctor does not exist');
+  }
+
+  const patient = await this.prisma.patient.findUnique({ where: { id: patientId } });
+  if (!patient) {
+    throw new Error('Patient does not exist');
+  }
 
   const buffer = 30 * 60 * 1000;
   const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -29,6 +38,9 @@ async create(data: Prisma.AppointmentCreateInput): Promise<Appointment> {
         gte: startDate,
         lte: endDate,
       },
+      status:{
+        not:"cancelled"
+      }
     },
   });
 
@@ -44,6 +56,9 @@ async create(data: Prisma.AppointmentCreateInput): Promise<Appointment> {
         gte: startDate,
         lte: endDate,
       },
+      status:{
+        not:"cancelled"
+      }
     },
   });
 
